@@ -3,8 +3,9 @@ package com.n9mtq4.eventsystem.core
 import com.n9mtq4.eventsystem.core.event.*
 import com.n9mtq4.eventsystem.core.listener.ListenerAttribute
 import com.n9mtq4.eventsystem.core.listener.ListenerContainer
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.CopyOnWriteArrayList
+import java.util.*
+
+private typealias ListenerContainerList = ArrayList<ListenerContainer>
 
 /**
  * The main class of the LogWindowKt Library.
@@ -13,24 +14,52 @@ import java.util.concurrent.CopyOnWriteArrayList
  * 
  * @author Will "n9Mtq4" Bresnahan
  */
-
-typealias ListenerContainerList = CopyOnWriteArrayList<ListenerContainer>
-
 class EventSystem {
 	
-	val listenerContainers = ListenerContainerList()
+	/**
+	 * The list of listener containers that have been added
+	 * to this [EventSystem]
+	 * */
+	private val listenerContainers = ListenerContainerList()
 	
+	/**
+	 * If this event system has been disposed.
+	 * */
 	var disposed: Boolean = false
+		private set
 	
-	var pushing: Int = 0
-	val pushQueue = ConcurrentLinkedQueue<BaseEvent>(mutableListOf())
+	/**
+	 * how many events are currently being pushed
+	 * */
+	private var pushing: Int = 0
 	
+	/**
+	 * The queue of events waiting to be pushed
+	 * */
+	private val pushQueue = ArrayDeque<BaseEvent>(mutableListOf())
+	
+	/**
+	 * Disposes the Event System
+	 * Disables and removes the all the listener containers
+	 * 
+	 * @since 6.0
+	 * */
 	fun dispose() {
-		if (disposed) return
+		if (disposed) return // can only run this method once
+		// remove every listener
 		cloneListenerContainerList().forEach { removeListenerContainer(it, DisableEvent.EVENT_SYSTEM_DISPOSE) }
-		disposed = true
+		disposed = true // mark this method as already being run
 	}
 	
+	/**
+	 * Adds a listener attribute to this Event System.
+	 * 
+	 * @since 6.0
+	 * @param listenerAttribute the listener attribute to add
+	 * @param enable if the enable event should be sent (Default = true)
+	 * @return the listener container that was added
+	 * */
+	@JvmOverloads
 	fun addListenerAttribute(listenerAttribute: ListenerAttribute, enable: Boolean = true): ListenerContainer {
 		
 		val listenerContainer = ListenerContainer.makeListenerEntry(listenerAttribute)
@@ -39,6 +68,15 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Adds a listener container to this event system.
+	 * 
+	 * @since 6.0
+	 * @param listenerContainer the listener container to add
+	 * @param enable if the enable event should be send (Default = true)
+	 * @return the listener container that was added (same as the listenerContainer argument)
+	 * */
+	@JvmOverloads
 	fun addListenerContainer(listenerContainer: ListenerContainer, enable: Boolean = true): ListenerContainer {
 		
 		if (disposed) return listenerContainer
@@ -53,6 +91,14 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Enables the specified listener container.
+	 * Marks it as enabled, and allows it to receive events and
+	 * also sends the enable event.
+	 * 
+	 * @since 6.0
+	 * @param listenerContainer the listener container to enable
+	 * */
 	fun enableListenerContainer(listenerContainer: ListenerContainer) {
 		
 		if (disposed) return
@@ -63,6 +109,17 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Removes the specified listener container.
+	 * Will also disable it if [disable] is set to true.
+	 * 
+	 * @since 6.0
+	 * @param listenerContainer the listener container to remove
+	 * @param type the reason for the removal
+	 * @param disable if this listener container should be disabled
+	 * @return the listener container that was removed
+	 * */
+	@JvmOverloads
 	fun removeListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED, disable: Boolean = true): ListenerContainer {
 		
 		if (disposed) return listenerContainer
@@ -78,6 +135,15 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Disables the specified listener container.
+	 * Sends the disable event and marks it as not receiving events.
+	 * 
+	 * @since 6.0
+	 * @param listenerContainer the listener container to be disabled
+	 * @param type the reason for the disable.
+	 * */
+	@JvmOverloads
 	fun disableListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED) {
 		
 		if (disposed) return
@@ -88,6 +154,20 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Pushes the event.
+	 * 
+	 * If it is the only event in the queue, it will
+	 * be pushed right now. If there are other ahead of
+	 * it, it will be added to the queue and pushed as
+	 * soon as possible.
+	 * 
+	 * If pushing emediatly is needed, see [pushEventNow]
+	 * 
+	 * @see pushEventNow
+	 * @since 6.0
+	 * @param event the event to push
+	 * */
 	fun pushEvent(event: BaseEvent) {
 		
 		if (currentlyPushing()) {
@@ -99,6 +179,16 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Pushes the event right now.
+	 * 
+	 * The event skips the queue. Other events waiting in the queue
+	 * will have to wait for both events before being pushed.
+	 * 
+	 * @see pushEvent
+	 * @since 6.0
+	 * @param event the event to push now
+	 * */
 	fun pushEventNow(event: BaseEvent) {
 		
 		if (disposed) return // if disposed, don't run
@@ -138,8 +228,16 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Adds the event to the queue
+	 * 
+	 * @param event the event to add to the queue
+	 * */
 	private fun addToPushQueue(event: BaseEvent) = pushQueue.add(event)
 	
+	/**
+	 * Checks to see if it should push an event now
+	 * */
 	private fun requestNextPush() {
 		
 		if (currentlyPushing()) return // already pushing, so stop
@@ -149,12 +247,25 @@ class EventSystem {
 		
 	}
 	
+	/**
+	 * Is something being pushed currently?
+	 * 
+	 * @return if something is pushing currently
+	 * */
 	private fun currentlyPushing() = pushing > 0
 	
+	/**
+	 * Indicates that something has started pushing.
+	 * */
 	private fun startPushing() {
 		pushing++ // add a current pushing
 	}
 	
+	/**
+	 * Indicates that something has finished pushing.
+	 * 
+	 * Pushes the next thing if nothing else is being pushed.
+	 * */
 	private fun stopPushing() {
 		pushing-- // remove a current pushing
 		if (!currentlyPushing()) {
@@ -163,6 +274,13 @@ class EventSystem {
 		}
 	}
 	
+	/**
+	 * Makes a duplicate list of the [listenerContainers]
+	 * so that you can modify the listener containers while
+	 * iterating.
+	 *
+	 * @return a cloned [listenerContainers] list
+	 * */
 	private fun cloneListenerContainerList() = listenerContainers.toList()
 	
 }
