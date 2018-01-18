@@ -4,8 +4,11 @@ import java.awt.Color
 import java.awt.color.ColorSpace
 
 /**
+ * A color class that has ansi color codes that correspond
+ * with the colors defined as constants in this class.
+ * 
  * Created by will on 1/5/2018 at 6:27 PM.
- *
+ * 
  * @author Will "n9Mtq4" Bresnahan
  */
 class Colour : Color {

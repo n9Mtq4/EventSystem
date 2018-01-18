@@ -2,8 +2,8 @@ package com.n9mtq4.eventsystem.core.ui
 
 import com.n9mtq4.eventsystem.core.EventSystem
 import com.n9mtq4.eventsystem.core.annotation.ListensFor
-import com.n9mtq4.eventsystem.usertext.events.PrintEvent
 import com.n9mtq4.eventsystem.core.listener.BaseListener
+import com.n9mtq4.eventsystem.usertext.events.PrintEvent
 
 /**
  * An interface for implementing a listener that
@@ -15,6 +15,12 @@ import com.n9mtq4.eventsystem.core.listener.BaseListener
  */
 interface EventSystemUI : BaseListener {
 	
+	/**
+	 * DON'T USE THIS METHOD
+	 * 
+	 * A method that receives the print event and sends it to the print
+	 * method.
+	 * */
 	@Suppress("unused")
 	@ListensFor
 	fun receivePrintRequest(printEvent: PrintEvent, eventSystem: EventSystem) {

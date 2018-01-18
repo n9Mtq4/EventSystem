@@ -10,6 +10,13 @@ import java.io.StringWriter
  * @author Will "n9Mtq4" Bresnahan
  */
 
+/**
+ * Turns an [Exception]'s stack trace into a string.
+ * Takes e.printStackTrace() and returns the string.
+ * 
+ * @receiver the exception
+ * @return the string stack trace
+ * */
 fun Exception.toStackTraceString(): String {
 	
 	val sw = StringWriter()

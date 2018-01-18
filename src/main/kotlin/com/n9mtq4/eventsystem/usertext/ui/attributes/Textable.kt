@@ -1,15 +1,16 @@
 package com.n9mtq4.eventsystem.usertext.ui.attributes
 
 /**
- * A interface that flags a {@link ConsoleUI} as having
- * full control over the text that has been pushed to them and that the ConsoleGui
+ * A interface that flags a [com.n9mtq4.eventsystem.core.ui.EventSystemUI] as having
+ * full control over the text that has been pushed to them and that the 
+ * [com.n9mtq4.eventsystem.core.ui.EventSystemUI]
  * can set the text that has already been sent to it.
  *
+ * This interface should only be on a [com.n9mtq4.eventsystem.core.ui.EventSystemUI]
+ * 
  * <p>Created by will on 1/7/15.</p>
  *
- * @see #getText()
- * @see #setText(String)
- * @since v4.0
+ * @since 4.0
  * @version 6.0
  * @author Will "n9Mtq4" Bresnahan
  */

@@ -10,8 +10,10 @@ import javax.swing.text.StyleContext
 import javax.swing.text.StyledDocument
 
 /**
+ * A text area that supports colors and images.
+ * 
  * Created by will on 1/6/2018 at 9:37 AM.
- *
+ * 
  * @author Will "n9Mtq4" Bresnahan
  */
 class RichTextArea : JTextPane {

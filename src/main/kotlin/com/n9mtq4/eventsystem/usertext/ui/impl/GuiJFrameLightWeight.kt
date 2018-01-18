@@ -8,8 +8,13 @@ import javax.swing.*
 import javax.swing.text.DefaultCaret
 
 /**
+ * A [com.n9mtq4.eventsystem.core.ui.EventSystemUI] that has a [JFrame].
+ * It has the text being outputed and a text field where the user can
+ * enter text. This implementation does NOT support coloring the text output.
+ * 
  * Created by will on 1/6/2018 at 1:29 AM.
- *
+ * 
+ * @since 6.0
  * @author Will "n9Mtq4" Bresnahan
  */
 class GuiJFrameLightWeight : GuiJFrameTextArea() {
@@ -18,6 +23,9 @@ class GuiJFrameLightWeight : GuiJFrameTextArea() {
 	private lateinit var area: JTextArea
 	private lateinit var scrollArea: JScrollPane
 	
+	/**
+	 * Initializes the gui.
+	 * */
 	override fun init() {
 		
 		try {
@@ -62,6 +70,9 @@ class GuiJFrameLightWeight : GuiJFrameTextArea() {
 		
 	}
 	
+	/**
+	 * Handles sending the input to the event system
+	 * */
 	override fun onFieldEnter(event: ActionEvent) {
 		
 		val source = event.source as JTextField
@@ -74,6 +85,11 @@ class GuiJFrameLightWeight : GuiJFrameTextArea() {
 		
 	}
 	
+	/**
+	 * Handles printing output
+	 * 
+	 * Does not support color
+	 * */
 	override fun print(printEvent: PrintEvent) {
 		
 		(area.caret as DefaultCaret).updatePolicy = DefaultCaret.ALWAYS_UPDATE
@@ -82,8 +98,14 @@ class GuiJFrameLightWeight : GuiJFrameTextArea() {
 		
 	}
 	
+	/**
+	 * Gets the text that this has printed out.
+	 * */
 	override fun getText(): String = area.text
 	
+	/**
+	 * Sets the text that this shows.
+	 * */
 	override fun setText(text: String) {
 		area.text = text
 	}

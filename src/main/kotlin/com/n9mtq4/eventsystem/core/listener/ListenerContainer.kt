@@ -31,15 +31,36 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	
 	companion object {
 		
+		/**
+		 * Turns a listener attribute into a listener container
+		 * 
+		 * @param listener the listener attribute
+		 * @return the listener container
+		 * */
 		fun makeListenerEntry(listener: ListenerAttribute): ListenerContainer = ListenerContainer(listener)
 		
 		// TODO: implement stopDisable and stopRemoval
 		
 	}
 	
+	/**
+	 * The list of linked event systems that this container
+	 * has been added to.
+	 * Use [cloneEventSystemList] when iterating over it, so it doesn't 
+	 * through a concurrent modification exception
+	 * */
 	protected val linkedEventSystems = ArrayList<EventSystem>()
 	
+	/**
+	 * If this [ListenerContainer] is enabled and willing
+	 * to receive events
+	 * */
 	var enabled = false
+	
+	/**
+	 * If this [ListenerContainer] should still receive events, even if
+	 * they have been disabled.
+	 * */
 	var ignoreCanceled = false
 	
 	private val listenerMethodLookup = MultiHashMap<KClass<*>, KFunction<*>>()
@@ -48,7 +69,11 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	
 	private var init = false
 	
-	fun init() {
+	/**
+	 * Initializes this [ListenerContainer].
+	 * Generates method caches for the future
+	 * */
+	private fun init() {
 		
 		if (init) return
 		init = true
@@ -56,14 +81,32 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 	}
 	
-	fun addToEventSystem(eventSystem: EventSystem) {
+	/**
+	 * DO NOT USE THIS METHOD
+	 * 
+	 * Add this listener container to the [EventSystem]
+	 * Requires the corresponding method from the [EventSystem] called
+	 * in the correct order.
+	 * 
+	 * @param eventSystem the event system that is being added
+	 * */
+	internal fun addToEventSystem(eventSystem: EventSystem) {
 		
 		init()
 		if (eventSystem !in linkedEventSystems) linkedEventSystems.add(eventSystem)
 		
 	}
 	
-	fun removeFromEventSystem(eventSystem: EventSystem) {
+	/**
+	 * DO NOT USE THIS METHOD
+	 * 
+	 * Removes this listener container from the [EventSystem]
+	 * Requires the corresponding method from the [EventSystem] called
+	 * in the correct order.
+	 * 
+	 * @param eventSystem the event system that is being removed
+	 * */
+	internal fun removeFromEventSystem(eventSystem: EventSystem) {
 		
 		if (eventSystem in linkedEventSystems) linkedEventSystems.remove(eventSystem)
 		
@@ -125,6 +168,11 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 	}
 	
+	/**
+	 * Searches the listener attribute for possible methods that
+	 * have the [ListensFor] annotation. Adds them into the 
+	 * [listenerMethodLookup] hash map.
+	 * */
 	private fun initializeGenericListenerCache() {
 		
 		if (listener !is BaseListener) return
@@ -154,8 +202,20 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 	}
 	
+	/**
+	 * Gets a list of the class along with any parent classes and parent annotations.
+	 * 
+	 * @return A list of KClass of the class and all supers
+	 * */
 	private fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + kClass.allSupertypes.map { it.classifier }.map { it as KClass<*> }
 	
+	/**
+	 * Gets all the annotations on a method, including those from
+	 * inherited annotations.
+	 * 
+	 * @receiver the KFunction to get the annotations for
+	 * @return a list of annotations
+	 * */
 	private fun <R> KFunction<R>.allAnnotations(): List<Annotation> {
 		
 		val allClasses = parentClasses(listener::class)
@@ -171,6 +231,12 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 	}
 	
+	/**
+	 * Gets a string that should be unique to every function within a class
+	 * 
+	 * @receiver the KFunction to get the signature sting
+	 * @return the signature string
+	 * */
 	private fun <R> KFunction<R>.toSignatureString(): String {
 		
 		// remove the first param (this) if needed
@@ -250,6 +316,13 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 	}
 	
+	/**
+	 * Makes a duplicate list of the [linkedEventSystems]
+	 * so that you can modify the linkedEventSystem while
+	 * iterating. 
+	 * 
+	 * @return a cloned [linkedEventSystems] list
+	 * */
 	fun cloneEventSystemList() = linkedEventSystems.toList()
 	
 }
