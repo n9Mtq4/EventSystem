@@ -36,6 +36,7 @@ fun EventSystem.println() = this.print("", newLine = true)
  * @param obj the object to print
  * @param colour the color (if supported) to print it in
  * */
+@JvmOverloads
 fun EventSystem.println(obj: Any?, colour: Colour? = null) {
 	this.print(obj, newLine = true, colour = colour)
 }
@@ -48,6 +49,7 @@ fun EventSystem.println(obj: Any?, colour: Colour? = null) {
  * @param newLine should it append a new line to the end?
  * @param colour the color (if supported) to print it in
  * */
+@JvmOverloads
 fun EventSystem.print(obj: Any?, newLine: Boolean = false, colour: Colour? = null) {
 	pushEventNow(PrintEvent(this, obj, newLine, colour))
 }
