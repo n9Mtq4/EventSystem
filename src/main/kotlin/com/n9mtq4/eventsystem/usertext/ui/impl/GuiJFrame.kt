@@ -3,7 +3,6 @@ package com.n9mtq4.eventsystem.usertext.ui.impl
 import com.n9mtq4.eventsystem.usertext.events.PrintEvent
 import com.n9mtq4.eventsystem.usertext.events.UserTextEvent
 import com.n9mtq4.eventsystem.usertext.ui.impl.components.RichTextArea
-import com.n9mtq4.eventsystem.usertext.utils.Colour
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import javax.swing.*
@@ -96,7 +95,7 @@ class GuiJFrame : GuiJFrameTextArea() {
 		
 		(area.caret as DefaultCaret).updatePolicy = DefaultCaret.ALWAYS_UPDATE
 		val ending = if (printEvent.newLine) "\n" else ""
-		area.append("${printEvent.obj}$ending", printEvent.colour ?: Colour.BLACK)
+		area.append("${printEvent.obj}$ending", printEvent.colour ?: area.foreground)
 		
 	}
 	
