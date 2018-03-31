@@ -281,6 +281,6 @@ class EventSystem {
 	 *
 	 * @return a cloned [listenerContainers] list
 	 * */
-	private fun cloneListenerContainerList() = listenerContainers.toList()
+	fun cloneListenerContainerList() = listenerContainers.toList()
 	
 }
