@@ -14,29 +14,29 @@ private typealias ListenerContainerList = ArrayList<ListenerContainer>
  * 
  * @author Will "n9Mtq4" Bresnahan
  */
-class EventSystem {
+open class EventSystem {
 	
 	/**
 	 * The list of listener containers that have been added
 	 * to this [EventSystem]
 	 * */
-	private val listenerContainers = ListenerContainerList()
+	protected val listenerContainers = ListenerContainerList()
 	
 	/**
 	 * If this event system has been disposed.
 	 * */
 	var disposed: Boolean = false
-		private set
+		protected set
 	
 	/**
 	 * how many events are currently being pushed
 	 * */
-	private var pushing: Int = 0
+	protected var pushing: Int = 0
 	
 	/**
 	 * The queue of events waiting to be pushed
 	 * */
-	private val pushQueue = ArrayDeque<BaseEvent>(mutableListOf())
+	protected val pushQueue = ArrayDeque<BaseEvent>(mutableListOf())
 	
 	/**
 	 * Disposes the Event System
@@ -233,12 +233,12 @@ class EventSystem {
 	 * 
 	 * @param event the event to add to the queue
 	 * */
-	private fun addToPushQueue(event: BaseEvent) = pushQueue.add(event)
+	protected fun addToPushQueue(event: BaseEvent) = pushQueue.add(event)
 	
 	/**
 	 * Checks to see if it should push an event now
 	 * */
-	private fun requestNextPush() {
+	protected fun requestNextPush() {
 		
 		if (currentlyPushing()) return // already pushing, so stop
 		if (pushQueue.isEmpty()) return // nothing to push, so stop
@@ -252,12 +252,12 @@ class EventSystem {
 	 * 
 	 * @return if something is pushing currently
 	 * */
-	private fun currentlyPushing() = pushing > 0
+	protected fun currentlyPushing() = pushing > 0
 	
 	/**
 	 * Indicates that something has started pushing.
 	 * */
-	private fun startPushing() {
+	protected fun startPushing() {
 		pushing++ // add a current pushing
 	}
 	
@@ -266,7 +266,7 @@ class EventSystem {
 	 * 
 	 * Pushes the next thing if nothing else is being pushed.
 	 * */
-	private fun stopPushing() {
+	protected fun stopPushing() {
 		pushing-- // remove a current pushing
 		if (!currentlyPushing()) {
 			// if there are no current pushing events

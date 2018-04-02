@@ -11,7 +11,7 @@ import com.n9mtq4.eventsystem.usertext.events.PrintEvent
  * 
  * @author Will "n9Mtq4" Bresnahan
  */
-class UISysOut : EventSystemUI {
+open class UISysOut : EventSystemUI {
 	
 	/**
 	 * The receiving method of [PrintEvent]

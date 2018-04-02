@@ -18,11 +18,11 @@ import javax.swing.text.DefaultCaret
  * @since 6.0
  * @author Will "n9Mtq4" Bresnahan
  */
-class GuiJFrame : GuiJFrameTextArea() {
+open class GuiJFrame : GuiJFrameTextArea() {
 	
-	private lateinit var noWrapPanel: JPanel
-	private lateinit var area: RichTextArea
-	private lateinit var scrollArea: JScrollPane
+	protected lateinit var noWrapPanel: JPanel
+	protected lateinit var area: RichTextArea
+	protected lateinit var scrollArea: JScrollPane
 	
 	/**
 	 * Initializes the gui.

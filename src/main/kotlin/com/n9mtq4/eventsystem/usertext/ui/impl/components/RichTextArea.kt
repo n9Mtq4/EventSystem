@@ -16,7 +16,7 @@ import javax.swing.text.StyledDocument
  * 
  * @author Will "n9Mtq4" Bresnahan
  */
-class RichTextArea : JTextPane {
+open class RichTextArea : JTextPane {
 	
 	/**
 	 * Is this Rich Text Area editable by

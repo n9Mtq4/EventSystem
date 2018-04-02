@@ -26,11 +26,11 @@ private const val PROMPT_STRING = ""
  */
 open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI() {
 	
-	private var scanner: Scanner? = null
-	private var console: Console? = null
+	protected var scanner: Scanner? = null
+	protected var console: Console? = null
 	
-	private var shouldScan: Boolean = true
-	private var ansi: Boolean = true
+	protected var shouldScan: Boolean = true
+	protected var ansi: Boolean = true
 	
 	/**
 	 * Initializes this ui
@@ -45,7 +45,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Initializes the ui
 	 * */
-	private fun initInput() {
+	protected fun initInput() {
 		if (System.console() == null) {
 			initScanner()
 		} else {
@@ -56,7 +56,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Initializes using the System.console() implementation
 	 * */
-	private fun initConsole() {
+	protected fun initConsole() {
 		
 		this.console = System.console()
 		this.shouldScan = true
@@ -77,7 +77,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Initializes using the Scanner implementation
 	 * */
-	private fun initScanner() {
+	protected fun initScanner() {
 		
 		this.scanner = Scanner(System.`in`)
 		this.shouldScan = true
@@ -107,7 +107,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	 * Stops scanning for new input
 	 * might require an enter to take effect.
 	 * */
-	private fun stopScan() {
+	protected fun stopScan() {
 		shouldScan = false
 	}
 	

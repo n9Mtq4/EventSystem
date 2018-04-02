@@ -17,11 +17,11 @@ import javax.swing.text.DefaultCaret
  * @since 6.0
  * @author Will "n9Mtq4" Bresnahan
  */
-class GuiJFrameLightWeight : GuiJFrameTextArea() {
+open class GuiJFrameLightWeight : GuiJFrameTextArea() {
 	
-	private lateinit var noWrapPanel: JPanel
-	private lateinit var area: JTextArea
-	private lateinit var scrollArea: JScrollPane
+	protected lateinit var noWrapPanel: JPanel
+	protected lateinit var area: JTextArea
+	protected lateinit var scrollArea: JScrollPane
 	
 	/**
 	 * Initializes the gui.
