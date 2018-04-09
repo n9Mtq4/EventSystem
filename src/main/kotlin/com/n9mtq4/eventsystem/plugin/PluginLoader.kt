@@ -70,10 +70,15 @@ fun loadPluginsToEventSystem(eventSystem: EventSystem, plugins: List<File>) {
 			.filterNotNull()
 	
 	// add them to the classpath
-	pluginsParsed.map { it.first }.forEach { addFileToClasspath(it) }
+	pluginsParsed
+			.map { it.first }
+			.forEach { addFileToClasspath(it) }
 	
 	// get a list of classes to add
-	val listenerClasses = pluginsParsed.map { it.second }.map { it.map { s -> LWReflectionHelper.getClassByFullName(s) as Class<*> } }.flatten()
+	val listenerClasses = pluginsParsed
+			.map { it.second }
+			.map { it.map { s -> LWReflectionHelper.getClassByFullName(s) as Class<*> } }
+			.flatten() // flatMap has a hard time with type inference
 	
 	// make an instance of the listener attributes
 	val listenerAttributes = listenerClasses.map { LWReflectionHelper.callConstructor(it) as ListenerAttribute }

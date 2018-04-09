@@ -39,8 +39,6 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		 * */
 		fun makeListenerEntry(listener: ListenerAttribute): ListenerContainer = ListenerContainer(listener)
 		
-		// TODO: implement stopDisable and stopRemoval
-		
 	}
 	
 	/**
@@ -179,7 +177,11 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 		val classesToSearch = parentClasses(listener::class)
 		// TODO: possible bug. distinct by toString isn't good. Ideally will go up subclass hierarchy
-		val functions = classesToSearch.flatMap { it.members }.filter { it is KFunction<*> }.map { it as KFunction<*> }.distinctBy { it.toSignatureString() }
+		val functions = classesToSearch
+				.flatMap { it.members }
+				.filter { it is KFunction<*> }
+				.map { it as KFunction<*> }
+				.distinctBy { it.toSignatureString() }
 		
 		val functionsAndListensFor = functions
 				.map { it to it.allAnnotations()
@@ -191,12 +193,10 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 		functionsAndListensFor.forEach { (function, clazz) ->
 			
-			if (clazz == listensForInherit) {
-				val newClazz = function.parameters[1].type.classifier as KClass<*>
-				listenerMethodLookup.mput(newClazz, function)
-			}else {
-				listenerMethodLookup.mput(clazz, function)
-			}
+			val newClazz = if (clazz == listensForInherit) function.parameters[1].type.classifier as KClass<*>
+			else clazz
+			
+			listenerMethodLookup.mput(newClazz, function)
 			
 		}
 		
@@ -207,7 +207,10 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * 
 	 * @return A list of KClass of the class and all supers
 	 * */
-	private fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + kClass.allSupertypes.map { it.classifier }.map { it as KClass<*> }
+	private fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + 
+			(kClass.allSupertypes
+					.map { it.classifier }
+					.map { it as KClass<*> })
 	
 	/**
 	 * Gets all the annotations on a method, including those from
@@ -271,7 +274,9 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		/*
 		* Try a deeper search.
 		* */
-		val pair = event::class to listenerMethodLookup.filter { it.key.isInstance(event) }.flatMap { it.value }
+		val pair = event::class to listenerMethodLookup
+				.filter { it.key.isInstance(event) }
+				.flatMap { it.value }
 		
 		/*
 		* If an item does not appear in our records, it does not exist
@@ -310,7 +315,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 				?.let { it as Async }?.type ?: AsyncType.NONE // get the type. If its null, then type = none
 		
 		// we got the type, lets cache it
-		listenerMethodAsyncType.put(function, asyncType)
+		listenerMethodAsyncType[function] = asyncType
 		
 		return asyncType
 		
