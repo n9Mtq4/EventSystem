@@ -1,6 +1,6 @@
-package com.n9mtq4.eventsystem.core.ui.impl
+package com.n9mtq4.eventsystem.usertext.ui.impl
 
-import com.n9mtq4.eventsystem.core.ui.EventSystemUI
+import com.n9mtq4.eventsystem.usertext.ui.EventSystemUI
 import com.n9mtq4.eventsystem.usertext.events.PrintEvent
 
 /**

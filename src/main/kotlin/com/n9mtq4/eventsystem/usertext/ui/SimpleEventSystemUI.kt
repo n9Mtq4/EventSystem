@@ -1,4 +1,4 @@
-package com.n9mtq4.eventsystem.core.ui
+package com.n9mtq4.eventsystem.usertext.ui
 
 import com.n9mtq4.eventsystem.core.EventSystem
 import com.n9mtq4.eventsystem.core.event.AdditionEvent

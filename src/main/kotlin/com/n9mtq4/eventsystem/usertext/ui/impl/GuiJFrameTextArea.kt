@@ -1,6 +1,6 @@
 package com.n9mtq4.eventsystem.usertext.ui.impl
 
-import com.n9mtq4.eventsystem.core.ui.SimpleEventSystemUI
+import com.n9mtq4.eventsystem.usertext.ui.SimpleEventSystemUI
 import com.n9mtq4.eventsystem.usertext.ui.attributes.HasFrame
 import com.n9mtq4.eventsystem.usertext.ui.attributes.Textable
 import java.awt.event.ActionEvent
