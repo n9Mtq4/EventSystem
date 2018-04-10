@@ -8,12 +8,14 @@ import com.n9mtq4.eventsystem.core.annotation.listensForInherit
 import com.n9mtq4.eventsystem.core.event.BaseEvent
 import com.n9mtq4.eventsystem.core.utils.MultiHashMap
 import kotlinx.coroutines.experimental.launch
+import java.lang.reflect.Modifier
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.allSupertypes
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaMethod
 
 private const val SET_ACCESSIBLE = false
 
@@ -179,8 +181,10 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		// TODO: possible bug. distinct by toString isn't good. Ideally will go up subclass hierarchy
 		val functions = classesToSearch
 				.flatMap { it.members }
-				.filter { it is KFunction<*> }
-				.map { it as KFunction<*> }
+				.filterIsInstance<KFunction<*>>()
+//				.filter { it is KFunction<*> }
+//				.map { it as KFunction<*> }
+				.filterNot { Modifier.isStatic(it.javaMethod?.modifiers ?: return@filterNot true) }
 				.distinctBy { it.toSignatureString() }
 		
 		val functionsAndListensFor = functions
@@ -242,10 +246,14 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * */
 	private fun <R> KFunction<R>.toSignatureString(): String {
 		
+		// if there are no params, just go with name and return type
+		if (parameters.isEmpty()) return "$name NO_PARAMS $returnType"
+		
 		// remove the first param (this) if needed
 		val removeThisParam = if (parameters[0].kind == KParameter.Kind.INSTANCE) parameters.drop(1) else parameters
 		val sigParams = removeThisParam.map { it.run { "$name $type $isOptional" } }
 		return "$name $sigParams $returnType"
+		
 	}
 	
 	/**
