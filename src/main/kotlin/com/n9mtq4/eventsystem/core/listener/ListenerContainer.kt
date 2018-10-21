@@ -7,7 +7,8 @@ import com.n9mtq4.eventsystem.core.annotation.ListensFor
 import com.n9mtq4.eventsystem.core.annotation.listensForInherit
 import com.n9mtq4.eventsystem.core.event.BaseEvent
 import com.n9mtq4.eventsystem.core.utils.MultiHashMap
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.lang.reflect.Modifier
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
@@ -32,6 +33,8 @@ private const val SET_ACCESSIBLE = false
 open class ListenerContainer private constructor(val listener: ListenerAttribute) {
 	
 	companion object {
+		
+		private const val COROUTINE_THREADS = 2
 		
 		/**
 		 * Turns a listener attribute into a listener container
@@ -129,7 +132,8 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 				.forEach { (target, type) ->
 					when (type) {
 						AsyncType.NONE -> callBaseEventReceiver(event, target)
-						AsyncType.COROUTINE -> { launch { callBaseEventReceiver(event, target) } }
+						// TODO: should this be a GlobalScope?
+						AsyncType.COROUTINE -> { GlobalScope.launch { callBaseEventReceiver(event, target) } }
 						AsyncType.THREAD -> thread(start = true) { callBaseEventReceiver(event, target) }
 					}
 				}
@@ -182,15 +186,11 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		val functions = classesToSearch
 				.flatMap { it.members }
 				.filterIsInstance<KFunction<*>>()
-//				.filter { it is KFunction<*> }
-//				.map { it as KFunction<*> }
 				.filterNot { Modifier.isStatic(it.javaMethod?.modifiers ?: return@filterNot true) }
 				.distinctBy { it.toSignatureString() }
 		
 		val functionsAndListensFor = functions
-				.map { it to it.allAnnotations()
-						.filter { it is ListensFor }
-						.map { it as ListensFor } }
+				.map { it to it.allAnnotations().filterIsInstance<ListensFor>() }
 				.filter { it.second.isNotEmpty() }
 				.map { it.first to it.second.first() }
 				.map { it.first to it.second.clazz }
@@ -228,8 +228,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		val allClasses = parentClasses(listener::class)
 		val allFunctions = allClasses
 				.flatMap { it.members }
-				.filter { it is KFunction<*> }
-				.map { it as KFunction<*> }
+				.filterIsInstance<KFunction<*>>()
 		
 		val ourSig = this.toSignatureString()
 		val matchingFunctions = allFunctions.filter { it.toSignatureString() == ourSig }
@@ -275,7 +274,8 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		
 		/*
 		* Have we tried and failed to find this listener event
-		* before?
+		* before? If so, remember that we have failed before and
+		* don't spend time trying to search for it again
 		* */
 		if (event::class in listenerUnsupportedEvents) return emptyList()
 		
