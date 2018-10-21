@@ -92,9 +92,11 @@ open class GuiJFrameLightWeight : GuiJFrameTextArea() {
 	 * */
 	override fun print(printEvent: PrintEvent) {
 		
-		(area.caret as DefaultCaret).updatePolicy = DefaultCaret.ALWAYS_UPDATE
-		val ending = if (printEvent.newLine) "\n" else ""
-		area.append("${printEvent.obj}$ending")
+		SwingUtilities.invokeLater {
+			(area.caret as DefaultCaret).updatePolicy = DefaultCaret.ALWAYS_UPDATE
+			val ending = if (printEvent.newLine) "\n" else ""
+			area.append("${printEvent.obj}$ending")
+		}
 		
 	}
 	
@@ -107,7 +109,7 @@ open class GuiJFrameLightWeight : GuiJFrameTextArea() {
 	 * Sets the text that this shows.
 	 * */
 	override fun setText(text: String) {
-		area.text = text
+		SwingUtilities.invokeLater { area.text = text }
 	}
 	
 }

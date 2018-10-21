@@ -82,21 +82,19 @@ abstract class GuiJFrameTextArea : SimpleEventSystemUI(), Textable, HasFrame {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
 					KeyEvent.VK_UP -> {
-						if (historyIndex > 0) {
-							historyIndex--
-							field.apply {
-								text = history[historyIndex]
-								caretPosition = text.length
-							}
+						if (historyIndex <= 0) return
+						historyIndex--
+						field.apply {
+							text = history[historyIndex]
+							caretPosition = text.length
 						}
 					}
 					KeyEvent.VK_DOWN -> {
-						if (historyIndex < history.size - 1) {
-							historyIndex++
-							field.apply {
-								text = history[historyIndex]
-								caretPosition = text.length
-							}
+						if (historyIndex >= historyIndex - 1) return
+						historyIndex++
+						field.apply {
+							text = history[historyIndex]
+							caretPosition = text.length
 						}
 					}
 				}

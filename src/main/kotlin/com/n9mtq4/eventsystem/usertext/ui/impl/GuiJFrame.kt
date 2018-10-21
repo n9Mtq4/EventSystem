@@ -93,9 +93,11 @@ open class GuiJFrame : GuiJFrameTextArea() {
 	 * */
 	override fun print(printEvent: PrintEvent) {
 		
-		(area.caret as DefaultCaret).updatePolicy = DefaultCaret.ALWAYS_UPDATE
-		val ending = if (printEvent.newLine) "\n" else ""
-		area.append("${printEvent.obj}$ending", printEvent.colour ?: area.foreground)
+		SwingUtilities.invokeLater {
+			(area.caret as DefaultCaret).updatePolicy = DefaultCaret.ALWAYS_UPDATE
+			val ending = if (printEvent.newLine) "\n" else ""
+			area.append("${printEvent.obj}$ending", printEvent.colour ?: area.foreground)
+		}
 		
 	}
 	
@@ -108,7 +110,7 @@ open class GuiJFrame : GuiJFrameTextArea() {
 	 * Sets the text that this shows.
 	 * */
 	override fun setText(text: String) {
-		area.text = text
+		SwingUtilities.invokeLater { area.text = text }
 	}
 	
 }
