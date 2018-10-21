@@ -61,6 +61,7 @@ fun loadPluginToEventSystem(eventSystem: EventSystem, pluginFile: File) {
  * @param eventSystem the event system to load the plugins to
  * @param plugins the list of plugins to load
  * */
+@Suppress("DEPRECATION")
 fun loadPluginsToEventSystem(eventSystem: EventSystem, plugins: List<File>) {
 	
 	// read through files to make sure they have a valid plugins.txt

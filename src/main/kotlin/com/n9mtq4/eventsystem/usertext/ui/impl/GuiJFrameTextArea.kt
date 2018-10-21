@@ -45,7 +45,7 @@ abstract class GuiJFrameTextArea : SimpleEventSystemUI(), Textable, HasFrame {
 	 * */
 	override fun dispose() {
 		// TODO: commented out in LogWindow. why?
-//		frame.dispose()
+		frame.dispose()
 	}
 	
 	/**
