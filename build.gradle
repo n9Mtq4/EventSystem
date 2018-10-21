@@ -42,9 +42,6 @@ compileTestKotlin {
 }
 
 kotlin {
-    experimental {
-        contracts 'enable'
-    }
 }
 
 dokka {
