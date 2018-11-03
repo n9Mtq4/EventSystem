@@ -12,6 +12,7 @@ import com.n9mtq4.eventsystem.usertext.listener.UserTextListener
  *
  * @author Will "n9Mtq4" Bresnahan
  */
+@Suppress("unused")
 class ModuleExit : UserTextListener {
 	
 	/**
