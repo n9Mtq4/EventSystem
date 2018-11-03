@@ -30,7 +30,7 @@ private const val SET_ACCESSIBLE = false
  * @version 6.0
  * @author Will "n9Mtq4" Bresnahan
  */
-open class ListenerContainer private constructor(val listener: ListenerAttribute) {
+open class ListenerContainer protected constructor(val listener: ListenerAttribute) {
 	
 	companion object {
 		
