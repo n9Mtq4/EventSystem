@@ -1,7 +1,7 @@
 package com.n9mtq4.eventsystem.plugin
 
 import com.n9mtq4.eventsystem.core.EventSystem
-import com.n9mtq4.eventsystem.core.listener.BaseListener
+import com.n9mtq4.eventsystem.core.listener.ListenerAttribute
 import com.n9mtq4.eventsystem.plugin.reflect.addFileToClasspath
 import java.io.File
 import java.io.FileNotFoundException
@@ -87,7 +87,7 @@ private fun loadPluginsToEventSystem(eventSystem: EventSystem, plugins: List<Fil
 	// make an instance of the listener attributes
 	val listenerAttributes = listenerClasses
 			.mapNotNull { it.primaryConstructor?.call() }
-			.map { it as BaseListener }
+			.map { it as ListenerAttribute }
 	
 	// add them to the event system
 	val listenerContainers = listenerAttributes
