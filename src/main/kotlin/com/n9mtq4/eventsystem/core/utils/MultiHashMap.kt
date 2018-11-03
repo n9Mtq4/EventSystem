@@ -13,7 +13,7 @@ package com.n9mtq4.eventsystem.core.utils
  *
  * @author Will "n9Mtq4" Bresnahan
  */
-internal class MultiHashMap<K, V>: HashMap<K, List<V>>() {
+class MultiHashMap<K, V>: HashMap<K, List<V>>() {
 	
 	// TODO: support removing values. Since removing isn't needed, it isn't implemented here
 	

@@ -34,8 +34,6 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	
 	companion object {
 		
-		private const val COROUTINE_THREADS = 2
-		
 		/**
 		 * Turns a listener attribute into a listener container
 		 * 
@@ -66,17 +64,17 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * */
 	var ignoreCanceled = false
 	
-	private val listenerMethodLookup = MultiHashMap<KClass<*>, KFunction<*>>()
-	private val listenerUnsupportedEvents = ArrayList<KClass<*>>()
-	private val listenerMethodAsyncType = HashMap<KFunction<*>, AsyncType>()
+	protected val listenerMethodLookup = MultiHashMap<KClass<*>, KFunction<*>>()
+	protected val listenerUnsupportedEvents = ArrayList<KClass<*>>()
+	protected val listenerMethodAsyncType = HashMap<KFunction<*>, AsyncType>()
 	
-	private var init = false
+	protected var init = false
 	
 	/**
 	 * Initializes this [ListenerContainer].
 	 * Generates method caches for the future
 	 * */
-	private fun init() {
+	protected fun init() {
 		
 		if (init) return
 		init = true
@@ -146,7 +144,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * @param event the generic event to send
 	 * @param function the generic function listener that will get the event
 	 * */
-	private fun callBaseEventReceiver(event: BaseEvent, function: KFunction<*>) {
+	protected fun callBaseEventReceiver(event: BaseEvent, function: KFunction<*>) {
 		
 		// there could be multiple linked event systems
 		cloneEventSystemList().forEach { eventSystem ->
@@ -177,7 +175,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * have the [ListensFor] annotation. Adds them into the 
 	 * [listenerMethodLookup] hash map.
 	 * */
-	private fun initializeGenericListenerCache() {
+	protected fun initializeGenericListenerCache() {
 		
 		if (listener !is BaseListener) return
 		
@@ -211,7 +209,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * 
 	 * @return A list of KClass of the class and all supers
 	 * */
-	private fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + 
+	protected fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + 
 			(kClass.allSupertypes
 					.map { it.classifier }
 					.map { it as KClass<*> })
@@ -223,7 +221,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * @receiver the KFunction to get the annotations for
 	 * @return a list of annotations
 	 * */
-	private fun <R> KFunction<R>.allAnnotations(): List<Annotation> {
+	protected fun <R> KFunction<R>.allAnnotations(): List<Annotation> {
 		
 		val allClasses = parentClasses(listener::class)
 		val allFunctions = allClasses
@@ -243,7 +241,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * @receiver the KFunction to get the signature sting
 	 * @return the signature string
 	 * */
-	private fun <R> KFunction<R>.toSignatureString(): String {
+	protected fun <R> KFunction<R>.toSignatureString(): String {
 		
 		// if there are no params, just go with name and return type
 		if (parameters.isEmpty()) return "$name NO_PARAMS $returnType"
@@ -263,7 +261,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * @param event the event
 	 * @return the function that corresponds to the event
 	 * */
-	private fun findTargets(event: BaseEvent): List<KFunction<*>> {
+	protected fun findTargets(event: BaseEvent): List<KFunction<*>> {
 		
 		/*
 		* simple look up
@@ -310,7 +308,7 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 	 * @param function the listener's function
 	 * @return the [AsyncType] of the function
 	 * */
-	private fun getAsyncTypeForFunction(function: KFunction<*>): AsyncType {
+	protected fun getAsyncTypeForFunction(function: KFunction<*>): AsyncType {
 		
 		// check the cache first
 		listenerMethodAsyncType[function]?.let { return it }
@@ -318,7 +316,8 @@ open class ListenerContainer private constructor(val listener: ListenerAttribute
 		// if we didn't find it, figure out what async type it should be
 		
 		// get the async type
-		val asyncType = function.allAnnotations() // search annotations
+		val asyncType = function
+				.allAnnotations() // search annotations
 				.firstOrNull { it is Async } // find the async one
 				?.let { it as Async }?.type ?: AsyncType.NONE // get the type. If its null, then type = none
 		
