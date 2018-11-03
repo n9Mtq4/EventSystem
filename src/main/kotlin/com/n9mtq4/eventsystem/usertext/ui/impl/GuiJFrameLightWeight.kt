@@ -19,9 +19,9 @@ import javax.swing.text.DefaultCaret
  */
 open class GuiJFrameLightWeight : GuiJFrameTextArea() {
 	
-	protected lateinit var noWrapPanel: JPanel
-	protected lateinit var area: JTextArea
-	protected lateinit var scrollArea: JScrollPane
+	protected open lateinit var noWrapPanel: JPanel
+	protected open lateinit var area: JTextArea
+	protected open lateinit var scrollArea: JScrollPane
 	
 	/**
 	 * Initializes the gui.

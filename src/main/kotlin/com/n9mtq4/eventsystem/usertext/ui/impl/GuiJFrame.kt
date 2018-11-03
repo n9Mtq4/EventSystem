@@ -20,9 +20,9 @@ import javax.swing.text.DefaultCaret
  */
 open class GuiJFrame : GuiJFrameTextArea() {
 	
-	protected lateinit var noWrapPanel: JPanel
-	protected lateinit var area: RichTextArea
-	protected lateinit var scrollArea: JScrollPane
+	protected open lateinit var noWrapPanel: JPanel
+	protected open lateinit var area: RichTextArea
+	protected open lateinit var scrollArea: JScrollPane
 	
 	/**
 	 * Initializes the gui.

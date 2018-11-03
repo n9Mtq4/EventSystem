@@ -20,23 +20,23 @@ open class EventSystem {
 	 * The list of listener containers that have been added
 	 * to this [EventSystem]
 	 * */
-	protected val listenerContainers = ListenerContainerList()
+	protected open val listenerContainers = ListenerContainerList()
 	
 	/**
 	 * If this event system has been disposed.
 	 * */
-	var disposed: Boolean = false
+	open var disposed: Boolean = false
 		protected set
 	
 	/**
 	 * how many events are currently being pushed
 	 * */
-	protected var pushing: Int = 0
+	protected open var pushing: Int = 0
 	
 	/**
 	 * The queue of events waiting to be pushed
 	 * */
-	protected val pushQueue = ArrayDeque<BaseEvent>(mutableListOf())
+	protected open val pushQueue = ArrayDeque<BaseEvent>(mutableListOf())
 	
 	/**
 	 * Disposes the Event System
@@ -44,7 +44,7 @@ open class EventSystem {
 	 * 
 	 * @since 6.0
 	 * */
-	fun dispose() {
+	open fun dispose() {
 		if (disposed) return // can only run this method once
 		// remove every listener
 		cloneListenerContainerList().forEach { removeListenerContainer(it, DisableEvent.EVENT_SYSTEM_DISPOSE) }
@@ -60,7 +60,7 @@ open class EventSystem {
 	 * @return the listener container that was added
 	 * */
 	@JvmOverloads
-	fun addListenerAttribute(listenerAttribute: ListenerAttribute, enable: Boolean = true): ListenerContainer {
+	open fun addListenerAttribute(listenerAttribute: ListenerAttribute, enable: Boolean = true): ListenerContainer {
 		
 		val listenerContainer = ListenerContainer.makeListenerEntry(listenerAttribute)
 		addListenerContainer(listenerContainer, enable)
@@ -77,7 +77,7 @@ open class EventSystem {
 	 * @return the listener container that was added (same as the listenerContainer argument)
 	 * */
 	@JvmOverloads
-	fun addListenerContainer(listenerContainer: ListenerContainer, enable: Boolean = true): ListenerContainer {
+	open fun addListenerContainer(listenerContainer: ListenerContainer, enable: Boolean = true): ListenerContainer {
 		
 		if (disposed) return listenerContainer
 		
@@ -99,7 +99,7 @@ open class EventSystem {
 	 * @since 6.0
 	 * @param listenerContainer the listener container to enable
 	 * */
-	fun enableListenerContainer(listenerContainer: ListenerContainer) {
+	open fun enableListenerContainer(listenerContainer: ListenerContainer) {
 		
 		if (disposed) return
 		if (listenerContainer.enabled) return
@@ -120,7 +120,7 @@ open class EventSystem {
 	 * @return the listener container that was removed
 	 * */
 	@JvmOverloads
-	fun removeListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED, disable: Boolean = true): ListenerContainer {
+	open fun removeListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED, disable: Boolean = true): ListenerContainer {
 		
 		if (disposed) return listenerContainer
 		
@@ -144,7 +144,7 @@ open class EventSystem {
 	 * @param type the reason for the disable.
 	 * */
 	@JvmOverloads
-	fun disableListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED) {
+	open fun disableListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED) {
 		
 		if (disposed) return
 		if (!listenerContainer.enabled) return
@@ -168,7 +168,7 @@ open class EventSystem {
 	 * @since 6.0
 	 * @param event the event to push
 	 * */
-	fun pushEvent(event: BaseEvent) {
+	open fun pushEvent(event: BaseEvent) {
 		
 		if (currentlyPushing()) {
 			addToPushQueue(event)
@@ -189,7 +189,7 @@ open class EventSystem {
 	 * @since 6.0
 	 * @param event the event to push now
 	 * */
-	fun pushEventNow(event: BaseEvent) {
+	open fun pushEventNow(event: BaseEvent) {
 		
 		if (disposed) return // if disposed, don't run
 		startPushing()
@@ -233,12 +233,12 @@ open class EventSystem {
 	 * 
 	 * @param event the event to add to the queue
 	 * */
-	protected fun addToPushQueue(event: BaseEvent) = pushQueue.add(event)
+	protected open fun addToPushQueue(event: BaseEvent) = pushQueue.add(event)
 	
 	/**
 	 * Checks to see if it should push an event now
 	 * */
-	protected fun requestNextPush() {
+	protected open fun requestNextPush() {
 		
 		if (currentlyPushing()) return // already pushing, so stop
 		if (pushQueue.isEmpty()) return // nothing to push, so stop
@@ -252,12 +252,12 @@ open class EventSystem {
 	 * 
 	 * @return if something is pushing currently
 	 * */
-	protected fun currentlyPushing() = pushing > 0
+	protected open fun currentlyPushing() = pushing > 0
 	
 	/**
 	 * Indicates that something has started pushing.
 	 * */
-	protected fun startPushing() {
+	protected open fun startPushing() {
 		pushing++ // add a current pushing
 	}
 	
@@ -266,7 +266,7 @@ open class EventSystem {
 	 * 
 	 * Pushes the next thing if nothing else is being pushed.
 	 * */
-	protected fun stopPushing() {
+	protected open fun stopPushing() {
 		pushing-- // remove a current pushing
 		if (!currentlyPushing()) {
 			// if there are no current pushing events
@@ -281,6 +281,6 @@ open class EventSystem {
 	 *
 	 * @return a cloned [listenerContainers] list
 	 * */
-	fun cloneListenerContainerList() = listenerContainers.toList()
+	open fun cloneListenerContainerList() = listenerContainers.toList()
 	
 }

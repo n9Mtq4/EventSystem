@@ -1,8 +1,8 @@
 package com.n9mtq4.eventsystem.usertext.ui.impl
 
-import com.n9mtq4.eventsystem.usertext.ui.SimpleEventSystemUI
 import com.n9mtq4.eventsystem.usertext.events.PrintEvent
 import com.n9mtq4.eventsystem.usertext.events.UserTextEvent
+import com.n9mtq4.eventsystem.usertext.ui.SimpleEventSystemUI
 import com.n9mtq4.eventsystem.usertext.utils.Colour
 import java.io.Console
 import java.util.*
@@ -26,11 +26,11 @@ private const val PROMPT_STRING = ""
  */
 open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI() {
 	
-	protected var scanner: Scanner? = null
-	protected var console: Console? = null
+	protected open var scanner: Scanner? = null
+	protected open var console: Console? = null
 	
-	protected var shouldScan: Boolean = true
-	protected var ansi: Boolean = true
+	protected open var shouldScan: Boolean = true
+	protected open var ansi: Boolean = true
 	
 	/**
 	 * Initializes this ui
@@ -45,7 +45,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Initializes the ui
 	 * */
-	protected fun initInput() {
+	protected open fun initInput() {
 		if (System.console() == null) {
 			initScanner()
 		} else {
@@ -56,7 +56,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Initializes using the System.console() implementation
 	 * */
-	protected fun initConsole() {
+	protected open fun initConsole() {
 		
 		this.console = System.console()
 		this.shouldScan = true
@@ -77,7 +77,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Initializes using the Scanner implementation
 	 * */
-	protected fun initScanner() {
+	protected open fun initScanner() {
 		
 		this.scanner = Scanner(System.`in`)
 		this.shouldScan = true
@@ -98,7 +98,7 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	/**
 	 * Dispose this ui
 	 * */
-	override fun dispose() {
+	override open fun dispose() {
 		stopScan()
 		if (scanner != null) scanner?.close()
 	}
@@ -107,14 +107,14 @@ open class UIScanner(val forceAnsiColour: Boolean = false) : SimpleEventSystemUI
 	 * Stops scanning for new input
 	 * might require an enter to take effect.
 	 * */
-	protected fun stopScan() {
+	protected open fun stopScan() {
 		shouldScan = false
 	}
 	
 	/**
 	 * Handles printing
 	 * */
-	override fun print(printEvent: PrintEvent) {
+	override open fun print(printEvent: PrintEvent) {
 		
 		val obj = printEvent.obj
 		val newLine = printEvent.newLine

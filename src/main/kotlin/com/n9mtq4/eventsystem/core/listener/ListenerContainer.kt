@@ -50,13 +50,13 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * Use [cloneEventSystemList] when iterating over it, so it doesn't 
 	 * through a concurrent modification exception
 	 * */
-	protected val linkedEventSystems = ArrayList<EventSystem>()
+	protected open val linkedEventSystems = ArrayList<EventSystem>()
 	
 	/**
 	 * If this [ListenerContainer] is enabled and willing
 	 * to receive events
 	 * */
-	var enabled = false
+	open var enabled = false
 	
 	/**
 	 * If this [ListenerContainer] should still receive events, even if
@@ -64,17 +64,17 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * */
 	var ignoreCanceled = false
 	
-	protected val listenerMethodLookup = MultiHashMap<KClass<*>, KFunction<*>>()
-	protected val listenerUnsupportedEvents = ArrayList<KClass<*>>()
-	protected val listenerMethodAsyncType = HashMap<KFunction<*>, AsyncType>()
+	protected open val listenerMethodLookup = MultiHashMap<KClass<*>, KFunction<*>>()
+	protected open val listenerUnsupportedEvents = ArrayList<KClass<*>>()
+	protected open val listenerMethodAsyncType = HashMap<KFunction<*>, AsyncType>()
 	
-	protected var init = false
+	protected open var init = false
 	
 	/**
 	 * Initializes this [ListenerContainer].
 	 * Generates method caches for the future
 	 * */
-	protected fun init() {
+	protected open fun init() {
 		
 		if (init) return
 		init = true
@@ -91,7 +91,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * 
 	 * @param eventSystem the event system that is being added
 	 * */
-	internal fun addToEventSystem(eventSystem: EventSystem) {
+	internal open fun addToEventSystem(eventSystem: EventSystem) {
 		
 		init()
 		if (eventSystem !in linkedEventSystems) linkedEventSystems.add(eventSystem)
@@ -107,7 +107,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * 
 	 * @param eventSystem the event system that is being removed
 	 * */
-	internal fun removeFromEventSystem(eventSystem: EventSystem) {
+	internal open fun removeFromEventSystem(eventSystem: EventSystem) {
 		
 		if (eventSystem in linkedEventSystems) linkedEventSystems.remove(eventSystem)
 		
@@ -120,7 +120,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * 
 	 * @param event the generic event to send to the listener
 	 * */
-	fun pushBaseEvent(event: BaseEvent) {
+	open fun pushBaseEvent(event: BaseEvent) {
 		
 		// has to be a generic listener to get these events
 		if (listener !is BaseListener) return
@@ -144,7 +144,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * @param event the generic event to send
 	 * @param function the generic function listener that will get the event
 	 * */
-	protected fun callBaseEventReceiver(event: BaseEvent, function: KFunction<*>) {
+	protected open fun callBaseEventReceiver(event: BaseEvent, function: KFunction<*>) {
 		
 		// there could be multiple linked event systems
 		cloneEventSystemList().forEach { eventSystem ->
@@ -175,7 +175,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * have the [ListensFor] annotation. Adds them into the 
 	 * [listenerMethodLookup] hash map.
 	 * */
-	protected fun initializeGenericListenerCache() {
+	protected open fun initializeGenericListenerCache() {
 		
 		if (listener !is BaseListener) return
 		
@@ -209,7 +209,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * 
 	 * @return A list of KClass of the class and all supers
 	 * */
-	protected fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + 
+	protected open fun parentClasses(kClass: KClass<*>): List<KClass<*>> = listOf(kClass) + 
 			(kClass.allSupertypes
 					.map { it.classifier }
 					.map { it as KClass<*> })
@@ -221,7 +221,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * @receiver the KFunction to get the annotations for
 	 * @return a list of annotations
 	 * */
-	protected fun <R> KFunction<R>.allAnnotations(): List<Annotation> {
+	protected open fun <R> KFunction<R>.allAnnotations(): List<Annotation> {
 		
 		val allClasses = parentClasses(listener::class)
 		val allFunctions = allClasses
@@ -241,7 +241,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * @receiver the KFunction to get the signature sting
 	 * @return the signature string
 	 * */
-	protected fun <R> KFunction<R>.toSignatureString(): String {
+	protected open fun <R> KFunction<R>.toSignatureString(): String {
 		
 		// if there are no params, just go with name and return type
 		if (parameters.isEmpty()) return "$name NO_PARAMS $returnType"
@@ -261,7 +261,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * @param event the event
 	 * @return the function that corresponds to the event
 	 * */
-	protected fun findTargets(event: BaseEvent): List<KFunction<*>> {
+	protected open fun findTargets(event: BaseEvent): List<KFunction<*>> {
 		
 		/*
 		* simple look up
@@ -308,7 +308,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * @param function the listener's function
 	 * @return the [AsyncType] of the function
 	 * */
-	protected fun getAsyncTypeForFunction(function: KFunction<*>): AsyncType {
+	protected open fun getAsyncTypeForFunction(function: KFunction<*>): AsyncType {
 		
 		// check the cache first
 		listenerMethodAsyncType[function]?.let { return it }

@@ -22,7 +22,7 @@ abstract class SimpleEventSystemUI : EventSystemUI, AdditionListener, RemovalLis
 	 * The list of linked event systems that this event system ui
 	 * is added to.
 	 * */
-	protected val linkedEventSystems = ArrayList<EventSystem>()
+	protected open val linkedEventSystems = ArrayList<EventSystem>()
 	
 	/**
 	 * Has this event system ui been initialized yet?

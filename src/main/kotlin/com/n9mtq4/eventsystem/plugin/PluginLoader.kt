@@ -23,9 +23,15 @@ import java.util.zip.ZipFile
  * @param directory the directory of plugins
  * */
 @JvmOverloads
-fun EventSystem.loadPlugins(directory: File = File("plugins/")) {
-	loadPluginsToEventSystem(this, directory)
-}
+fun EventSystem.loadPlugins(directory: File = File("plugins/")) = loadPluginsToEventSystem(this, directory)
+
+/**
+ * Loads the specified plugin to the event system
+ *
+ * @receiver the event system to load plugins to
+ * @param file the jar file of the pluginss
+ * */
+fun EventSystem.loadPlugin(file: File) = loadPluginToEventSystem(this, file)
 
 /**
  * Loads all plugins from the specific directory to the event system.
@@ -33,8 +39,7 @@ fun EventSystem.loadPlugins(directory: File = File("plugins/")) {
  * @param eventSystem the event system to load plugins to
  * @param directory the directory to load plugins from
  * */
-@JvmOverloads
-fun loadPluginsToEventSystem(eventSystem: EventSystem, directory: File = File("plugins/")) {
+private fun loadPluginsToEventSystem(eventSystem: EventSystem, directory: File = File("plugins/")) {
 	
 	if (!directory.exists()) throw FileNotFoundException("The directory '${directory.absolutePath}' does not exist!")
 	val plugins = directory.walkTopDown().filter { it.isValidPlugin }.toList()
@@ -48,7 +53,7 @@ fun loadPluginsToEventSystem(eventSystem: EventSystem, directory: File = File("p
  * @param eventSystem the event system to load the plugin to
  * @param pluginFile the plugin file to load
  * */
-fun loadPluginToEventSystem(eventSystem: EventSystem, pluginFile: File) {
+private fun loadPluginToEventSystem(eventSystem: EventSystem, pluginFile: File) {
 	
 	if (!pluginFile.isValidPlugin) throw IOException("${pluginFile.absolutePath} is not a valid plugin")
 	loadPluginsToEventSystem(eventSystem, listOf(pluginFile))
@@ -62,13 +67,12 @@ fun loadPluginToEventSystem(eventSystem: EventSystem, pluginFile: File) {
  * @param plugins the list of plugins to load
  * */
 @Suppress("DEPRECATION")
-fun loadPluginsToEventSystem(eventSystem: EventSystem, plugins: List<File>) {
+private fun loadPluginsToEventSystem(eventSystem: EventSystem, plugins: List<File>) {
 	
 	// read through files to make sure they have a valid plugins.txt
 	val pluginsParsed = plugins
 			.filter { it.isValidPlugin }
-			.map { ignoreAndNull { it to parsePluginText(getPluginJsonText(it)) } }
-			.filterNotNull()
+			.mapNotNull { ignoreAndNull { it to parsePluginText(getPluginJsonText(it)) } }
 	
 	// add them to the classpath
 	pluginsParsed

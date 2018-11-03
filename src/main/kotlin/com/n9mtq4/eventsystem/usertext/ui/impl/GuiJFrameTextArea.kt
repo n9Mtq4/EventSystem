@@ -22,15 +22,15 @@ abstract class GuiJFrameTextArea : SimpleEventSystemUI(), Textable, HasFrame {
 	/**
 	 * The jframe of this gui
 	 * */
-	protected lateinit var frame: JFrame
+	protected open lateinit var frame: JFrame
 	
 	/**
 	 * The input text field of this gui
 	 * */
-	protected lateinit var field: JTextField
+	protected open lateinit var field: JTextField
 	
-	private val history = ArrayList<String>()
-	private var historyIndex = 0
+	protected open val history = ArrayList<String>()
+	protected open var historyIndex = 0
 	
 	/**
 	 * Gets called when the user pushes enter when [field] is 
@@ -57,7 +57,7 @@ abstract class GuiJFrameTextArea : SimpleEventSystemUI(), Textable, HasFrame {
 	 * Updates remember history that the user enters
 	 * allows for up and down arrow to enter the text again.
 	 * */
-	protected fun updateHistory(text: String) {
+	protected open fun updateHistory(text: String) {
 		history.add(text)
 		historyIndex = history.size
 	}
@@ -65,7 +65,7 @@ abstract class GuiJFrameTextArea : SimpleEventSystemUI(), Textable, HasFrame {
 	/**
 	 * Adds the action listener to the text field
 	 * */
-	protected fun JTextField.addFieldEnterHook() {
+	protected open fun JTextField.addFieldEnterHook() {
 		this.addActionListener {
 			onFieldEnter(it)
 		}
@@ -74,7 +74,7 @@ abstract class GuiJFrameTextArea : SimpleEventSystemUI(), Textable, HasFrame {
 	/**
 	 * Adds history up/down arrow to the text field
 	 * */
-	protected fun JTextField.addHistorySupport() {
+	protected open fun JTextField.addHistorySupport() {
 		this.addKeyListener(object : KeyListener {
 			override fun keyTyped(e: KeyEvent?) {}
 			override fun keyReleased(e: KeyEvent?) {}

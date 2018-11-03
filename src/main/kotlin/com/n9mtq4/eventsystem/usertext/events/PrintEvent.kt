@@ -15,7 +15,7 @@ import com.n9mtq4.eventsystem.usertext.utils.Colour
  * @since 6.0
  * @author Will "n9Mtq4" Bresnahan
  */
-class PrintEvent(override val initiatingEventSystem: EventSystem, val obj: Any?, val newLine: Boolean = false, val colour: Colour? = null) : BaseEvent {
+open class PrintEvent(override val initiatingEventSystem: EventSystem, val obj: Any?, val newLine: Boolean = false, val colour: Colour? = null) : BaseEvent {
 	
 	override var isCanceled: Boolean
 		get() = false

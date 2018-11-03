@@ -23,7 +23,7 @@ private val PARAMETERS = arrayOf<Class<*>>(URL::class.java)
  * @param file the file to add
  * */
 @Throws(IOException::class)
-fun addFileToClasspath(file: File) {
+internal fun addFileToClasspath(file: File) {
 	addUrlToClasspath(file.toURI().toURL())
 }
 
@@ -33,7 +33,7 @@ fun addFileToClasspath(file: File) {
  * @param url the url to add
  * */
 @Throws(IOException::class)
-fun addUrlToClasspath(url: URL) {
+internal fun addUrlToClasspath(url: URL) {
 	
 	val sysloader: URLClassLoader = ClassLoader.getSystemClassLoader() as URLClassLoader
 	val sysclass = URLClassLoader::class.java

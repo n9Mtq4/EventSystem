@@ -13,4 +13,4 @@ import com.n9mtq4.eventsystem.core.event.DefaultBaseEvent
  * @since 6.0
  * @author Will "n9Mtq4" Bresnahan
  */
-class UserTextEvent(initiatingEventSystem: EventSystem, val msg: String) : DefaultBaseEvent(initiatingEventSystem, false)
+open class UserTextEvent(initiatingEventSystem: EventSystem, val msg: String) : DefaultBaseEvent(initiatingEventSystem, false)
