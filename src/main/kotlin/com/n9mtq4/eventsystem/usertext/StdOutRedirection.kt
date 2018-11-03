@@ -26,6 +26,18 @@ class StdOutRedirection private constructor(private val showLocation: Boolean) :
 		/**
 		 * Adds a new instance of StdOutRedirect to the given [EventSystem].
 		 * Enables the show location if [showLocation] is set to true.
+		 *
+		 * @receiver the event system to add the redirection to
+		 * @param showLocation should the redirection show the line of code the call came from?
+		 * */
+		@JvmOverloads
+		fun EventSystem.enableStdOutRedirection(showLocation: Boolean = false) {
+			addToEventSystem(this, showLocation)
+		}
+		
+		/**
+		 * Adds a new instance of StdOutRedirect to the given [EventSystem].
+		 * Enables the show location if [showLocation] is set to true.
 		 * 
 		 * @param eventSystem the event system to add the redirection to
 		 * @param showLocation should the redirection show the line of code the call came from?
