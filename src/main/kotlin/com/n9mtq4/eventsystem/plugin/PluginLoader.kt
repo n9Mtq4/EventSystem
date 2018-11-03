@@ -1,14 +1,14 @@
 package com.n9mtq4.eventsystem.plugin
 
 import com.n9mtq4.eventsystem.core.EventSystem
-import com.n9mtq4.eventsystem.core.listener.ListenerAttribute
-import com.n9mtq4.eventsystem.plugin.reflect.LWReflectionHelper
+import com.n9mtq4.eventsystem.core.listener.BaseListener
 import com.n9mtq4.eventsystem.plugin.reflect.addFileToClasspath
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
 import java.util.zip.ZipFile
+import kotlin.reflect.full.primaryConstructor
 
 /**
  * Created by will on 1/24/2018 at 3:55 PM.
@@ -82,14 +82,16 @@ private fun loadPluginsToEventSystem(eventSystem: EventSystem, plugins: List<Fil
 	// get a list of classes to add
 	val listenerClasses = pluginsParsed
 			.map { it.second }
-			.map { it.map { s -> LWReflectionHelper.getClassByFullName(s) as Class<*> } }
-			.flatten() // flatMap has a hard time with type inference
+			.flatMap { it.map { s -> Class.forName(s).kotlin } }
 	
 	// make an instance of the listener attributes
-	val listenerAttributes = listenerClasses.map { LWReflectionHelper.callConstructor(it) as ListenerAttribute }
+	val listenerAttributes = listenerClasses
+			.mapNotNull { it.primaryConstructor?.call() }
+			.map { it as BaseListener }
 	
 	// add them to the event system
-	val listenerContainers = listenerAttributes.map { eventSystem.addListenerAttribute(it, enable = false) }
+	val listenerContainers = listenerAttributes
+			.map { eventSystem.addListenerAttribute(it, enable = false) }
 	
 	// enable the listeners
 	listenerContainers.forEach { eventSystem.enableListenerContainer(it) }
