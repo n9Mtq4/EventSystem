@@ -13,43 +13,57 @@ package com.n9mtq4.eventsystem.core.utils
  *
  * @author Will "n9Mtq4" Bresnahan
  */
-class MultiHashMap<K, V>: HashMap<K, List<V>>() {
-	
-	// TODO: support removing values. Since removing isn't needed, it isn't implemented here
+@Suppress("unused")
+class MultiHashMap<K, V>: HashMap<K, MutableList<V>>() {
 	
 	/**
-	 * @return the previous value(s) or an empty list if there weren't any
+	 * Adds a single value into the multi hashmap
+	 * 
+	 * @param key the key to add the value to
+	 * @param value the value to append into that key
 	 * */
-	fun mput(key: K, value: V): List<V> {
+	fun multiPutSingle(key: K, value: V) = multiPutList(key, listOf(value))
+	
+	/**
+	 * Adds a list of values into the multi hashmap
+	 * 
+	 * @param key the key to add the values to
+	 * @param values a list of values to append into that key
+	 * */
+	fun multiPutList(key: K, values: List<V>) {
 		
-		// if it isn't already there add a blank list
-		val old = get(key)
-		if (old == null) put(key, emptyList())
+		// get the list for the key
+		var list = get(key)
 		
-		val preList = old ?: emptyList() // a NPE should never happen, since we putIfAbsent right before
-		val newList = preList + value
+		// if the list doesn't exist make a new one now
+		if (list == null) {
+			list = mutableListOf()
+			put(key, list)
+		}
 		
-		put(key, newList.distinct())
-		
-		return preList
+		// add the new values into the list
+		list.addAll(values)
 		
 	}
 	
 	/**
-	 * @return the previous value(s) or an empty list if there weren't any
+	 * Removes the given value from the given key
+	 * 
+	 * @param key the key to remove the value from
+	 * @param value the value to remove
 	 * */
-	fun aput(key: K, value: List<V>): List<V> {
+	fun multiRemoveSingle(key: K, value: V) = multiRemoveList(key, listOf(value))
+	
+	/**
+	 * Removes the given values from the given key
+	 * 
+	 * @param key the key to remove the values from
+	 * @param values the values to remove
+	 * */
+	fun multiRemoveList(key: K, values: List<V>) {
 		
-		// if it isn't already there add a blank list
-		val old = get(key)
-		if (old == null) put(key, emptyList())
-		
-		val preList = old ?: emptyList() // a NPE should never happen, since we putIfAbsent right before
-		val newList = preList + value
-		
-		put(key, newList.distinct())
-		
-		return preList
+		val list = get(key)
+		list?.removeAll(values)
 		
 	}
 	

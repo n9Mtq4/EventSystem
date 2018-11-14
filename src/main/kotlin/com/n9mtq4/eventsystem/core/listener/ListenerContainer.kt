@@ -198,7 +198,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 			val newClazz = if (clazz == listensForInherit) function.parameters[1].type.classifier as KClass<*>
 			else clazz
 			
-			listenerMethodLookup.mput(newClazz, function)
+			listenerMethodLookup.multiPutSingle(newClazz, function)
 			
 		}
 		
@@ -297,7 +297,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 		* We found it. Let's remember it for
 		* next time, and return it!
 		* */
-		listenerMethodLookup.aput(pair.first, pair.second)
+		listenerMethodLookup.multiPutList(pair.first, pair.second)
 		return pair.second
 		
 	}
