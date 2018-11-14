@@ -3,7 +3,8 @@ package com.n9mtq4.eventsystem.core
 import com.n9mtq4.eventsystem.core.event.*
 import com.n9mtq4.eventsystem.core.listener.ListenerAttribute
 import com.n9mtq4.eventsystem.core.listener.ListenerContainer
-import java.util.*
+import java.util.ArrayDeque
+import java.util.ArrayList
 
 private typealias ListenerContainerList = ArrayList<ListenerContainer>
 
@@ -196,32 +197,31 @@ open class EventSystem {
 		
 		val listenerClones = cloneListenerContainerList()
 		
-		listenerClones.forEach { listenerContainer ->
-			
-			try {
+		listenerClones
+			.asSequence() // we want to be lazy here
+			.filter(ListenerContainer::enabled) // make sure listener is enabled
+			.filter { !event.isCanceled || it.ignoreCanceled } // event canceled check
+			.forEach { listenerContainer ->
 				
-				// make sure we can push to the listeners
-				if (listenerContainer.enabled && (!event.isCanceled || listenerContainer.ignoreCanceled)) {
+				try {
 					
 					listenerContainer.pushBaseEvent(event)
 					
+				}catch (e: Exception) {
+					
+					/*
+					* Wrap every listener in its own try so the program can continue if there is a crash.
+					* catch anything that happens in a listener and stop it from
+					* bubbling up and hurting the rest of the program
+					* print some information
+					* THIS SHOULD BE CAUGHT BEFORE THE EXCEPTION REACHES THIS POINT
+					* */
+					println("THIS SHOULD NOT HAPPEN")
+					println("Listener ${listenerContainer.listener::class.qualifiedName} has an error!")
+					e.printStackTrace()
+					
 				}
 				
-			}catch (e: Exception) {
-				
-				/*
-				* Wrap every listener in its own try so the program can continue if there is a crash.
-				* catch anything that happens in a listener and stop it from
-				* bubbling up and hurting the rest of the program
-				* print some information
-				* THIS SHOULD BE CAUGHT BEFORE THE EXCEPTION REACHES THIS POINT
-				* */
-				println("THIS SHOULD NOT HAPPEN")
-				println("Listener ${listenerContainer.listener::class.qualifiedName} has an error!")
-				e.printStackTrace()
-				
-			}
-			
 		}
 		
 		stopPushing()
