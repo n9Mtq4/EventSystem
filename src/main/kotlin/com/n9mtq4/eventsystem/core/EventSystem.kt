@@ -40,6 +40,18 @@ open class EventSystem {
 	protected open val pushQueue = ArrayDeque<BaseEvent>(mutableListOf())
 	
 	/**
+	 * Converts the ArrayList of [ListenerContainer]s to an immutable
+	 * list of [ListenerContainer]s. Prevents concurrent modification
+	 * exceptions when accessing listenerContainers.
+	 * 
+	 * Makes a duplicate list of the [listenerContainers]
+	 * so that you can modify the listener containers while
+	 * iterating.
+	 * */
+	open val listenerContainerList: List<ListenerContainer>
+		get() = listenerContainers.toList()
+	
+	/**
 	 * Disposes the Event System
 	 * Disables and removes the all the listener containers
 	 * 
@@ -48,7 +60,7 @@ open class EventSystem {
 	open fun dispose() {
 		if (disposed) return // can only run this method once
 		// remove every listener
-		cloneListenerContainerList().forEach { removeListenerContainer(it, DisableEvent.EVENT_SYSTEM_DISPOSE) }
+		listenerContainerList.forEach { removeListenerContainer(it, DisableEvent.EVENT_SYSTEM_DISPOSE) }
 		disposed = true // mark this method as already being run
 	}
 	
@@ -195,7 +207,7 @@ open class EventSystem {
 		if (disposed) return // if disposed, don't run
 		startPushing()
 		
-		val listenerClones = cloneListenerContainerList()
+		val listenerClones = listenerContainerList
 		
 		listenerClones
 			.asSequence() // we want to be lazy here
@@ -273,14 +285,5 @@ open class EventSystem {
 			requestNextPush()
 		}
 	}
-	
-	/**
-	 * Makes a duplicate list of the [listenerContainers]
-	 * so that you can modify the listener containers while
-	 * iterating.
-	 *
-	 * @return a cloned [listenerContainers] list
-	 * */
-	open fun cloneListenerContainerList() = listenerContainers.toList()
 	
 }

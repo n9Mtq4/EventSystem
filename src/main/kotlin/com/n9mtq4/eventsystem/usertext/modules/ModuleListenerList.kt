@@ -35,7 +35,7 @@ class ModuleListenerList : UserTextListener {
 		// go through all listeners, and print out their class name.
 		// print in green if they're enabled, red if disabled
 		eventSystem
-			.cloneListenerContainerList()
+			.listenerContainerList
 			.asSequence()
 			.map { it.enabled to it.listener::class.jvmName }
 			.forEachIndexed { index, (enabled, name) -> 

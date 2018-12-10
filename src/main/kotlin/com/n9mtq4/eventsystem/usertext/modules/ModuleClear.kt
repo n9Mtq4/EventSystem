@@ -36,7 +36,7 @@ class ModuleClear : UserTextListener {
 		
 		// if the event ui supports clearing the text, we can do so
 		eventSystem
-			.cloneListenerContainerList()
+			.listenerContainerList
 			.filterIsInstance<Textable>()
 			.forEach { it.setText("") }
 		
