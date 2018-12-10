@@ -19,6 +19,6 @@ open class PrintEvent(override val initiatingEventSystem: EventSystem, val obj: 
 	
 	override var isCanceled: Boolean
 		get() = false
-		set(value) {} // can't set this event to be canceled
+		set(_) {} // can't set this event to be canceled
 	
 }
