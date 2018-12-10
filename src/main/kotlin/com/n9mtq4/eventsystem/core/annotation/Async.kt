@@ -25,7 +25,7 @@ import java.lang.annotation.Inherited
 annotation class Async(val type: AsyncType = AsyncType.COROUTINE)
 
 /**
- * The backing implementation of the Async annotation.
+ * The types of asynchronous processing that can be applied.
  *
  * @since 6.0
  * @version 6.0
