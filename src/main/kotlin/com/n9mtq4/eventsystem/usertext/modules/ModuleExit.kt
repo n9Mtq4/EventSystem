@@ -24,7 +24,11 @@ class ModuleExit : UserTextListener {
 	 * */
 	override fun receiveUserText(event: UserTextEvent, eventSystem: EventSystem) {
 		
-		if (event.msg.trim().equals("exit", ignoreCase = true)) eventSystem.dispose()
+		// command must be "exit"
+		if (!event.msg.trim().equals("exit", ignoreCase = true)) return
+		
+		// dispose of the event system
+		eventSystem.dispose()
 		
 	}
 	

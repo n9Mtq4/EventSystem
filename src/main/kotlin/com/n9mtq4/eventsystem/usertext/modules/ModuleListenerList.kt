@@ -19,19 +19,29 @@ import kotlin.reflect.jvm.jvmName
 @Suppress("unused")
 class ModuleListenerList : UserTextListener {
 	
+	/**
+	 * A method that listens for text that the user enters.
+	 * If that text is "listener list", then it will print all
+	 * the listeners currently on the [EventSystem].
+	 * 
+	 * @param event the [UserTextEvent]
+	 * @param eventSystem the [EventSystem] that pushed this event
+	 * */
 	override fun receiveUserText(event: UserTextEvent, eventSystem: EventSystem) {
 		
-		if (event.msg.trim().equals("listener list", ignoreCase = true)) {
-			
-			val listenerContainerList = eventSystem.cloneListenerContainerList()
-			listenerContainerList
-					.map { it.enabled to it.listener::class.jvmName }
-					.forEachIndexed { index, (enabled, name) -> 
-						eventSystem.print("[$index]: ")
-						eventSystem.println(name, if (enabled) Colour.GREEN else Colour.RED) 
-					}
-			
-		}
+		// command must be "listener list"
+		if (!event.msg.trim().equals("listener list", ignoreCase = true)) return
+		
+		// go through all listeners, and print out their class name.
+		// print in green if they're enabled, red if disabled
+		eventSystem
+			.cloneListenerContainerList()
+			.asSequence()
+			.map { it.enabled to it.listener::class.jvmName }
+			.forEachIndexed { index, (enabled, name) -> 
+				eventSystem.print("[$index]: ")
+				eventSystem.println(name, if (enabled) Colour.GREEN else Colour.RED) 
+			}
 		
 	}
 	
