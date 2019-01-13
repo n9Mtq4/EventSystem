@@ -68,7 +68,7 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	protected open val listenerUnsupportedEvents = ArrayList<KClass<*>>()
 	protected open val listenerMethodAsyncType = HashMap<KFunction<*>, AsyncType>()
 	
-	protected open var init = false
+	protected open var hasBeenInitialized = false
 	
 	/**
 	 * Initializes this [ListenerContainer].
@@ -76,8 +76,8 @@ open class ListenerContainer protected constructor(val listener: ListenerAttribu
 	 * */
 	protected open fun init() {
 		
-		if (init) return
-		init = true
+		if (hasBeenInitialized) return
+		hasBeenInitialized = true
 		initializeGenericListenerCache()
 		
 	}
