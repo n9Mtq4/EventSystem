@@ -3,8 +3,7 @@ package com.n9mtq4.eventsystem.core
 import com.n9mtq4.eventsystem.core.event.*
 import com.n9mtq4.eventsystem.core.listener.ListenerAttribute
 import com.n9mtq4.eventsystem.core.listener.ListenerContainer
-import java.util.ArrayDeque
-import java.util.ArrayList
+import java.util.*
 
 private typealias ListenerContainerList = ArrayList<ListenerContainer>
 
@@ -58,7 +57,7 @@ open class EventSystem {
 	 * @since 6.0
 	 * */
 	open fun dispose() {
-		if (disposed) return // can only run this method once
+		if (disposed) throw IllegalStateException("EventSystem has been disposed.") // can only run this method once
 		// remove every listener
 		listenerContainerList.forEach { removeListenerContainer(it, DisableEvent.EVENT_SYSTEM_DISPOSE) }
 		disposed = true // mark this method as already being run
@@ -92,7 +91,7 @@ open class EventSystem {
 	@JvmOverloads
 	open fun addListenerContainer(listenerContainer: ListenerContainer, enable: Boolean = true): ListenerContainer {
 		
-		if (disposed) return listenerContainer
+		if (disposed) throw IllegalStateException("EventSystem has been disposed.")
 		
 		if (listenerContainer !in listenerContainers || this !in listenerContainer.cloneEventSystemList()) {
 			listenerContainers.add(listenerContainer)
@@ -114,7 +113,7 @@ open class EventSystem {
 	 * */
 	open fun enableListenerContainer(listenerContainer: ListenerContainer) {
 		
-		if (disposed) return
+		if (disposed) throw IllegalStateException("EventSystem has been disposed.")
 		if (listenerContainer.enabled) return
 		
 		listenerContainer.enabled = true
@@ -135,7 +134,7 @@ open class EventSystem {
 	@JvmOverloads
 	open fun removeListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED, disable: Boolean = true): ListenerContainer {
 		
-		if (disposed) return listenerContainer
+		if (disposed) throw IllegalStateException("EventSystem has been disposed.")
 		
 		if (listenerContainer in listenerContainers || this in listenerContainer.cloneEventSystemList()) {
 			if (disable) disableListenerContainer(listenerContainer, type)
@@ -159,7 +158,7 @@ open class EventSystem {
 	@JvmOverloads
 	open fun disableListenerContainer(listenerContainer: ListenerContainer, type: Int = DisableEvent.NOT_SPECIFIED) {
 		
-		if (disposed) return
+		if (disposed) throw IllegalStateException("EventSystem has been disposed.")
 		if (!listenerContainer.enabled) return
 		
 		listenerContainer.enabled = false
@@ -204,7 +203,7 @@ open class EventSystem {
 	 * */
 	open fun pushEventNow(event: BaseEvent) {
 		
-		if (disposed) return // if disposed, don't run
+		if (disposed) throw IllegalStateException("EventSystem has been disposed.") // if disposed, don't run
 		startPushing()
 		
 		val listenerClones = listenerContainerList
